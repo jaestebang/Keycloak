@@ -1,10 +1,13 @@
 version: "3.8"
 
+# Define a named volume for persisting PostgreSQL data
 volumes:
   keycloak-db-data:
     driver: local
 
+# Define services for PostgreSQL and Keycloak
 services:
+  # PostgreSQL service configuration
   postgres:
     image: postgres:13.7
     container_name: postgres
@@ -15,20 +18,25 @@ services:
       POSTGRES_USER: keycloak_user
       POSTGRES_PASSWORD: keycloak
     ports:
-      - 5432:5432
+      - 5432:5432 # Map PostgreSQL container's port 5432 to host's port 5432
 
+  # Keycloak service configuration
   keycloak:
-    build: .
+    build: . # Build the Keycloak service using the Dockerfile in the current directory
     container_name: custom-auth-service
     environment:
-      # Admin Credentials
+      # Keycloak Admin Credentials
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+
+      # Keycloak Database Connection Configuration
       KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak_db"
       KC_DB_USERNAME: keycloak_user
       KC_DB_PASSWORD: keycloak
+
+      # Additional Keycloak Settings
       KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "true"
       KC_HOSTNAME: localhost
@@ -38,6 +46,8 @@ services:
       - start
       - --optimized
     ports:
-      - 8443:8443
+      - 8443:8443 # Map Keycloak container's port 8443 to host's port 8443
+
+    # Specify that Keycloak depends on the PostgreSQL service
     depends_on:
       - postgres
