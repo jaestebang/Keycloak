@@ -9,8 +9,8 @@ volumes:
 services:
   # PostgreSQL service configuration
   postgres:
-    image: postgres:13.7
-    container_name: postgres
+    image: postgres:latest
+    container_name: postgres-keycloak
     volumes:
       - keycloak-db-data:/var/lib/postgresql/data
     environment:
@@ -32,7 +32,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
 
       # Keycloak Database Connection Configuration
-      KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak_db"
+      KC_DB_URL: "jdbc:postgresql://postgres-keycloak:5432/keycloak_db"
       KC_DB_USERNAME: keycloak_user
       KC_DB_PASSWORD: keycloak
 
